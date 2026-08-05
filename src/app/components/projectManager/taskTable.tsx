@@ -427,8 +427,12 @@ const TaskTable: React.FC<TaskTableProps> = ({
           ? "facilitator"
           : responseLink.data.data.role.toLowerCase();
 
+      const currentOrigin =
+        (typeof window !== "undefined" && window.location.origin)
+          ? window.location.origin
+          : (process.env.NEXT_PUBLIC_BASE_URL || "https://leyusound.netlify.app");
       setGeneratedLinkAddress(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/linkForm/${user_type}/${responseLink.data.data.id}`,
+        `${currentOrigin}/linkForm/${user_type}/${responseLink.data.data.id}`,
       );
 
       setTimeout(() => {

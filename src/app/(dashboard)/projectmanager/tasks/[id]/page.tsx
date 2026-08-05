@@ -274,7 +274,7 @@ const TaskDetailPage: React.FC = () => {
       max_invitations: invitation.max_invitations,
       expiry_date: invitation.expiry_date,
       organization: invitation.organization?.name || "Unknown",
-      link: `${process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== "undefined" ? window.location.origin : "https://leyusound.netlify.app")}/linkForm/${invitation.role.toLowerCase()}/${invitation.id}`,
+      link: `${(typeof window !== "undefined" && window.location.origin) ? window.location.origin : (process.env.NEXT_PUBLIC_BASE_URL || "https://leyusound.netlify.app")}/linkForm/${invitation.role.toLowerCase()}/${invitation.id}`,
       dateCreated: formatDateMedium(invitation.created_date),
     })) || [];
   const invitationTotalElements = invitationData?.data?.total || 0;
@@ -364,10 +364,9 @@ const TaskDetailPage: React.FC = () => {
         role: selectedRole,
       });
       const currentOrigin =
-        process.env.NEXT_PUBLIC_BASE_URL ||
-        (typeof window !== "undefined"
+        (typeof window !== "undefined" && window.location.origin)
           ? window.location.origin
-          : "https://leyusound.netlify.app");
+          : (process.env.NEXT_PUBLIC_BASE_URL || "https://leyusound.netlify.app");
       let usertype = "";
       if (
         responseLink.data.data.role.toLowerCase() === "contributor" ||
