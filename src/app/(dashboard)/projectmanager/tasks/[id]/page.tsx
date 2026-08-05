@@ -274,7 +274,7 @@ const TaskDetailPage: React.FC = () => {
       max_invitations: invitation.max_invitations,
       expiry_date: invitation.expiry_date,
       organization: invitation.organization?.name || "Unknown",
-      link: `${process.env.NEXT_PUBLIC_BASE_URL}/linkForm/${invitation.role.toLowerCase()}/${invitation.id}`,
+      link: `${process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== "undefined" ? window.location.origin : "https://leyusound.netlify.app")}/linkForm/${invitation.role.toLowerCase()}/${invitation.id}`,
       dateCreated: formatDateMedium(invitation.created_date),
     })) || [];
   const invitationTotalElements = invitationData?.data?.total || 0;
@@ -363,6 +363,11 @@ const TaskDetailPage: React.FC = () => {
         taskId: taskId,
         role: selectedRole,
       });
+      const currentOrigin =
+        process.env.NEXT_PUBLIC_BASE_URL ||
+        (typeof window !== "undefined"
+          ? window.location.origin
+          : "https://leyusound.netlify.app");
       let usertype = "";
       if (
         responseLink.data.data.role.toLowerCase() === "contributor" ||
@@ -370,7 +375,7 @@ const TaskDetailPage: React.FC = () => {
       ) {
         usertype = "contributor";
         setGeneratedLinkAddress(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/linkForm/${usertype}/${responseLink.data.data.id}`,
+          `${currentOrigin}/linkForm/${usertype}/${responseLink.data.data.id}`,
         );
       }
       if (
@@ -379,16 +384,16 @@ const TaskDetailPage: React.FC = () => {
       ) {
         usertype = "reviewer";
         setGeneratedLinkAddress(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/linkForm/${usertype}/${responseLink.data.data.id}`,
+          `${currentOrigin}/linkForm/${usertype}/${responseLink.data.data.id}`,
         );
       }
       if (
-        responseLink.data.data.role.toLowerCase() === "Facilitator" ||
-        responseLink.data.data.role.toLowerCase() === "Facilitators"
+        responseLink.data.data.role.toLowerCase() === "facilitator" ||
+        responseLink.data.data.role.toLowerCase() === "facilitators"
       ) {
         usertype = "facilitator";
         setGeneratedLinkAddress(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/linkForm/${usertype}/${responseLink.data.data.id}`,
+          `${currentOrigin}/linkForm/${usertype}/${responseLink.data.data.id}`,
         );
       }
 

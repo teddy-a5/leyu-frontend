@@ -2,5 +2,8 @@
   command = "npm run build"
   publish = ".next"
 
+[build.environment]
+  PNPM_FLAGS = "--no-frozen-lockfile"
+
 [[plugins]]
   package = "@netlify/plugin-nextjs"
