@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import TaskTable from "@/app/components/project/taskTable";
+import TaskTable from "@/app/components/projectManager/taskTable";
 import axios from "axios";
 import { ProjectResponse } from "@/app/types/project";
 import { MyProjectProfilesDetail } from "@/lib/hooks/useProjectManager";
