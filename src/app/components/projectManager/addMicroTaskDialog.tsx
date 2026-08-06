@@ -147,22 +147,26 @@ const AddMicroTaskDialog: React.FC<AddMicroTaskDialogProps> = ({
             const data = result.data;
             const requiredColumns: string[] = ["no", "text"];
             const allColumns:string[]=["name","text","taskId","category","intent"];
-            const headers: string[] = result.meta.fields || [];
-
-            const missingColumns = requiredColumns.filter(
-              (col) => !headers.includes(col)
+            const rawFields: string[] = result.meta.fields || [];
+            const headers: string[] = rawFields.map((h) =>
+              h.replace(/^\uFEFF/, "").trim().toLowerCase()
             );
-            if (missingColumns.length > 0) {
-              setCsvError(
-                `Missing required columns: ${missingColumns.join(", ")}`
-              );
+
+            const hasText = headers.includes("text") || headers.includes("content");
+            if (!hasText) {
+              setCsvError("Missing required column: text");
               setCsvData([]);
               return;
             }
 
-            const validRows: CsvRow[] = data.filter((row) =>
-              allColumns.every((col) => row[col]?.toString().trim())
-            );
+            const validRows: CsvRow[] = data.filter((row: any) => {
+              const keys = Object.keys(row);
+              const textKey = keys.find(
+                (k) => k.replace(/^\uFEFF/, "").trim().toLowerCase() === "text" ||
+                       k.replace(/^\uFEFF/, "").trim().toLowerCase() === "content"
+              );
+              return textKey && row[textKey]?.toString().trim();
+            });
 
             if (validRows.length === 0) {
               setCsvError("No valid rows found in the file");
@@ -192,16 +196,14 @@ const AddMicroTaskDialog: React.FC<AddMicroTaskDialogProps> = ({
             header: 1,
           });
 
-          const headers = jsonData[0] as string[];
-          const requiredColumns: string[] = ["no", "text"];
-          const missingColumns = requiredColumns.filter(
-            (col) => !headers.includes(col)
+          const rawHeaders = (jsonData[0] as string[]) || [];
+          const headers = rawHeaders.map((h) =>
+            String(h).replace(/^\uFEFF/, "").trim().toLowerCase()
           );
 
-          if (missingColumns.length > 0) {
-            setCsvError(
-              `Missing required columns: ${missingColumns.join(", ")}`
-            );
+          const hasText = headers.includes("text") || headers.includes("content");
+          if (!hasText) {
+            setCsvError("Missing required column: text");
             setCsvData([]);
             return;
           }
@@ -211,10 +213,14 @@ const AddMicroTaskDialog: React.FC<AddMicroTaskDialogProps> = ({
             .reduce((acc: CsvRow[], row: unknown) => {
               if (Array.isArray(row)) {
                 const rowData: CsvRow = {} as CsvRow;
-                headers.forEach((header, index) => {
+                rawHeaders.forEach((header, index) => {
                   rowData[header] = row[index]?.toString() || "";
                 });
-                if (requiredColumns.every((col) => rowData[col]?.trim())) {
+                if (
+                  row.some(
+                    (val) => val !== undefined && val !== null && String(val).trim() !== ""
+                  )
+                ) {
                   acc.push(rowData);
                 }
               }
