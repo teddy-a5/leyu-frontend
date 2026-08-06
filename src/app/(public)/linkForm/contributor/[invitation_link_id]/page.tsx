@@ -255,6 +255,7 @@ const LinkFormPage: React.FC = () => {
       invitationLinkId: invitation_link_id as string,
       data: {
         ...formData,
+        phone_number: formData.phone,
         confirmPassword: undefined,
       },
     });
